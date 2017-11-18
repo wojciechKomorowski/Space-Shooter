@@ -22,7 +22,7 @@ body {
     transform: translate(-50%, -50%);
 }
 
-#info {
+#info, #shipDestroyed, #earthDestroyed {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -33,6 +33,10 @@ body {
     transform: translate(-50%, -50%);
     font-size: 0.85rem;
     color: white;
+}
+
+#shipDestroyed, #earthDestroyed {
+    display: none;
 }
 
 #canvas {
