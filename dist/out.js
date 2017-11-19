@@ -74,52 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let innerWidth = canvas.width = canvas.scrollWidth;
     let innerHeight = canvas.height = canvas.scrollHeight;
 
-    // --- EVENTS ---
-        // -- Refresh on click --
-    // canvas.addEventListener('click', function() {
-    //     init();
-    // });
-    
-    // window.addEventListener('resize', function() {
-    //     innerWidth = canvas.width = window.innerWidth;
-    //     innerHeight = canvas.height = window.innerHeight - 50;
-        
-    //     init();
-    // });
-
-        // -- Spaceship Movement and shooting--
-
-    let rightPressed = false;
-    let leftPressed = false;
-    
-    let keyDownHandler = (e) => {
-        if (e.keyCode === 39) {
-            rightPressed = true;
-        } else if (e.keyCode === 37) {
-            leftPressed = true;
-        }
-    }
-    
-    let keyUpHandler = (e) => {
-        if(e.keyCode === 39) {
-            rightPressed = false;
-        } else if (e.keyCode === 37) {
-            leftPressed = false;
-        }
-    }
-
-    let keyPressHandler = (e) => {
-        if (e.key === ' ') {
-            let bullet = new Bullet(bulletProps);
-            bullet.x = spaceship.layers[0].x;
-            bullets.push(bullet);
-        } 
-    }
-    
-    document.addEventListener('keydown', keyDownHandler, false);
-    document.addEventListener('keyup', keyUpHandler, false);
-    document.addEventListener('keypress', keyPressHandler, false);
-
     // --- UTILITY FUNCTIONS ---
 
     let randomIntFromRange = (min, max) => {
@@ -137,7 +91,152 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
     }
 
-    // --- BASE CLASS ---
+    let shootSound = () => {
+        soundEffect(
+          1046.5,           //frequency
+          0,                //attack
+          0.3,              //decay
+          "sawtooth",       //waveform
+          0.1,                //Volume
+          -0.8,             //pan
+          0,                //wait before playing
+          1200,             //pitch bend amount
+          false,            //reverse bend
+          0,                //random pitch range
+          25,               //dissonance
+          undefined, //echo array: [delay, feedback, filter]
+          undefined         //reverb array: [duration, decay, reverse?]
+        );
+      }
+
+      let smallExplosionSound = () => {
+        soundEffect(
+          16,          //frequency
+          0,           //attack
+          0.2,           //decay
+          "sawtooth",  //waveform
+          0.1,           //volume
+          0,           //pan
+          0,           //wait before playing
+          0,           //pitch bend amount
+          false,       //reverse
+          0,           //random pitch range
+          50,          //dissonance
+          undefined,   //echo array: [delay, feedback, filter]
+          undefined    //reverb array: [duration, decay, reverse?]
+        );
+      }
+
+      let largeExplosionSound = () => {
+        soundEffect(
+          16,          //frequency
+          0,           //attack
+          1.2,           //decay
+          "sawtooth",  //waveform
+          0.1,           //volume
+          0,           //pan
+          0,           //wait before playing
+          0,           //pitch bend amount
+          false,       //reverse
+          0,           //random pitch range
+          50,          //dissonance
+          undefined,   //echo array: [delay, feedback, filter]
+          undefined    //reverb array: [duration, decay, reverse?]
+        );
+      }
+
+    // --- EVENTS ---
+
+    // -- Refresh on click --
+    // canvas.addEventListener('click', function() {
+    //     init();
+    // });
+    // -- Resize --
+    // window.addEventListener('resize', function() {
+    //     innerWidth = canvas.width = window.innerWidth;
+    //     innerHeight = canvas.height = window.innerHeight - 50;
+        
+    //     init();
+    // });
+
+    // -- Spaceship Movement and shooting--
+
+    let rightPressed = false;
+    let leftPressed = false;
+    let upPressed = false;
+    let downPressed = false;
+    
+    let keyDownHandler = (e) => {
+        if (e.keyCode === 39) {
+            rightPressed = true;
+        } else if (e.keyCode === 37) {
+            leftPressed = true;
+        } else if (e.keyCode === 38) {
+            upPressed = true;
+        } else if (e.keyCode === 40) {
+            downPressed = true;
+        }
+    }
+    
+    let keyUpHandler = (e) => {
+        if(e.keyCode === 39) {
+            rightPressed = false;
+        } else if (e.keyCode === 37) {
+            leftPressed = false;
+        } else if (e.keyCode === 38) {
+            upPressed = false;
+        } else if (e.keyCode === 40) {
+            downPressed = false;
+        }
+    }
+
+    let keyPressHandler = (e) => {
+        if (e.key === 'x') {
+            shootSound();
+            let bullet = new Bullet(bulletProps);
+            bullet.x = spaceship.layers[0].x;
+            bullet.y = spaceship.layers[0].y;
+            bullets.push(bullet);
+        } 
+    }
+
+    let enemyShooting = () => {
+        let timer = setInterval( () => {
+            let bullet = new EnemyBullet(enemyBulletProps);
+            bullet.x = enemyship.x + 40;
+            enemyBullets.push(bullet);
+        }, 1000);
+    }
+    enemyShooting();
+    
+    document.addEventListener('keydown', keyDownHandler, false);
+    document.addEventListener('keyup', keyUpHandler, false);
+    document.addEventListener('keypress', keyPressHandler, false);
+
+    // --- CONSTRUCTOR CLASSES---
+
+    //  -- Base rectangle class --
+
+    class Player {
+        constructor(player) {
+            this.x = player.x
+            this.y = player.y
+            this.font = player.font;
+            this.text = player.text;
+            this.color = player.color;
+        }
+        
+        draw() {
+            c.fillStyle = this.color;
+            c.font = this.font;
+            c.fillText(this.text, this.x, this.y);
+        }
+        update() {
+            this.text = 'Score: ' + playerScore;
+            this.draw();
+        }
+    }
+
     class Rectangle {
         constructor(rect) {
             this.x = rect.x;
@@ -148,10 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- SUPPORTIVE CLASSES ---
-    
-        // -- Background Stars --
-    
+    // -- Background Stars --
     class BackgroundStars extends Rectangle {
         constructor(stars) {
             super(stars);
@@ -179,8 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-        // -- Asteroids --
-    
+    // -- Asteroids --
     class Asteroids extends Rectangle {
         constructor(asteroids) {
             super(asteroids);
@@ -209,7 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // -- Spaceship ---
-    
     class Spaceship {
         constructor(ship) {
             this.layers = ship.layers; // Layers (array of objects) to draw more complicated shapes from numbers of rectangles.
@@ -234,17 +328,19 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let i = 0; i < this.layers.length; i++) { // Applied controls to all spaceship layers.
                 if (rightPressed && this.layers[15].x < innerWidth - this.layers[5].width) {
                     this.layers[i].x += 6; 
-                }
-                else if (leftPressed && this.layers[15].x > 0 + this.layers[4].width) {
+                } else if (leftPressed && this.layers[15].x > 0 + this.layers[4].width) {
                     this.layers[i].x -= 6;
-                }  
+                } else if (upPressed && this.layers[15].y > 0 + this.layers[15].height) {
+                    this.layers[i].y -= 6;
+                } else if (downPressed && this.layers[15].y < innerHeight - this.layers[15].height) {
+                    this.layers[i].y += 6;
+                } 
             }
             this.draw();
         }
     }
 
     // -- Bullet --
-
     class Bullet {
         constructor(bullet) {
             this.x = bullet.x;
@@ -266,11 +362,62 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // -- Enemy ship --
+    class EnemyShip {
+        constructor(ship) {
+            this.x = ship.x;
+            this.dx = ship.dx;
+            this.y = ship.y;
+            this.width = ship.width;
+            this.height = ship.height; 
+            this.color = ship.color; 
+        };
+
+        draw() {
+            c.fillStyle = this.color;
+            c.fillRect(this.x, this.y, this.width, this.height);
+        }
+
+        update() {
+            if (this.x + this.width > innerWidth || this.x < 0) {
+                this.dx = -this.dx;
+            }
+            this.x += this.dx;            
+            this.draw();
+        }
+    }
+
+    // -- Bullet --
+    class EnemyBullet {
+        constructor(bullet) {
+            this.x = bullet.x;
+            this.dx = bullet.dx;
+            this.y = bullet.y;
+            this.width = bullet.width;
+            this.height = bullet.height; 
+            this.color = bullet.color; 
+        };
+
+        draw() {
+            c.fillStyle = this.color;
+            c.fillRect(this.x, this.y, this.width, this.height);
+        }
+        
+        update() {
+            let dy = 5;
+            this.y += dy;
+            this.draw();
+        }
+    }
+
     // --- DYNAMIC ELEMENTS TO RENDER ---
+
+    let playerScore = 0;
+    let player;
     
     let starsArray; // Array to store background stars.
     let spaceship;
-    let p = 5; // Size of single pixel, used to create the ship.
+    let p = 4; // Size of single pixel, used to create the ship.
     let bullet; 
     let bullets = []; // Array to store bullets.
 
@@ -279,21 +426,38 @@ document.addEventListener('DOMContentLoaded', () => {
     let asteroidsControlPoint = false; // Information about starting asteroids drop.
     let asteroidsDrop = 6000; // Asteroids drop time.
 
+    let enemyship;
+    let enemyBullets = [];
+
     let xStartingPoint = innerWidth/2 + p; // Starting X coordinate of spaceship and bullets.
     let yStartingPoint = innerHeight - 110 + p; // Starting Y coordinate of spaceship and bullets.
-    
+    // Bullet properties - declared outside init function bcs needed in keypress event.
     let bulletProps = {
         x: xStartingPoint.x, 
         y: yStartingPoint + p * 2, 
         width: p * 2, 
-        height: p * 4,
+        height: p * 3,
         color: 'green'
     };
+    
+    let enemyXStartingPoint = innerWidth/2 + p; // Starting X coordinate of enemyship and bullets.
+    let enemyYStartingPoint = 0; // Starting Y coordinate of enemyship and bullets.
+    let enemyWidth = 80;
+    let enemyHeight = 80;
+    // Enemy bullet properties - declared outside init function bcs needed in enemyShooting interval function.
+    let enemyBulletProps = {
+        x: enemyXStartingPoint, 
+        y: enemyYStartingPoint + enemyHeight, 
+        width: p * 2, 
+        height: p * 3,
+        color: 'deeppink'
+    };
 
-    // How to play information div.
+    // Game state information div.
     let infoBox = document.getElementById('info');
     let shipDestroyed = document.getElementById('shipDestroyed');
     let earthDestroyed = document.getElementById('earthDestroyed');
+    let shipShot = document.getElementById('shipShot');
     let timer = setTimeout( () => {
         infoBox.style.display = 'none';
     }, 7000);
@@ -301,6 +465,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNCTION TO INITIALIZE CANVAS ---
 
     let init = () => {
+        // Player
+        let playerProps = {
+            x: innerWidth - 100,
+            y: 0 + 40,
+            font: '24px sh_pinscherregular',
+            color: 'white'
+        }
+        player = new Player(playerProps);
+
         // Background stars.
         let dropsNumber = 40;
         starsArray = [];
@@ -351,13 +524,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 asteroidsProps.x = randomIntFromRange(40, innerWidth - 60);
                 asteroidsArray.push(new Asteroids(asteroidsProps));
             }
-            console.log(asteroidsArray);
             }, asteroidsDrop);
         }
         asteroidsLoop();
         
         // Spaceship
-        
         let shipProps = {
             layers: [
                 {color: 'white', x: xStartingPoint, y: yStartingPoint, width: p * 2, height: p * 4},
@@ -396,9 +567,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }, 100);
         }
-
         spaceship = new Spaceship(shipProps); 
         blinkEngine(); 
+
+        // Enemy ship
+        let enemyProps = {
+            x: enemyXStartingPoint,
+            dx: 1,
+            y: enemyYStartingPoint,
+            width: enemyWidth,
+            height: enemyHeight,
+            color: 'red'
+        }
+        enemyship = new EnemyShip(enemyProps);
     }
 
     // --- MAIN ANIMATION LOOP ---
@@ -414,9 +595,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             spaceship.update();
-            
+
             for (let i = 0; i < bullets.length; i++) {   
                 bullets[i].update();
+                // Removing bullet from array if it leaves the top edge of the canvas.
                 if (bullets[i].y < 0) {
                     let bulletIndex = bullets.indexOf(bullets[i]);
                     bullets.splice(bulletIndex, 1);
@@ -424,11 +606,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (var j = 0; j < asteroidsArray.length; j++) {
                     let asteroidXCenter = asteroidsArray[j].x + (asteroidsArray[j].width / 2); 
                     let asteroidYCenter = asteroidsArray[j].y - (asteroidsArray[j].height / 2);
+                    // Collision effect between bullet and asteroid.
                     if (bullets[i] != undefined && getDistance(bullets[i].x, bullets[i].y, asteroidXCenter, asteroidYCenter) < 35) {
+                        smallExplosionSound();
+                        playerScore += 1;
                         let index = asteroidsArray.indexOf(asteroidsArray[j]);
                         let bulletIndex = bullets.indexOf(bullets[i]);
-                        bullets.splice(bulletIndex, 1);
-                        asteroidsArray.splice(index, 1);
+                        bullets.splice(bulletIndex, 1); // Collided bullet removed from array.
+                        asteroidsArray.splice(index, 1); // Collided asteroid removed from array.
                     }
                 }        
             }
@@ -436,20 +621,42 @@ document.addEventListener('DOMContentLoaded', () => {
             if (asteroidsControlPoint === true) {
                 for (let i = 0; i < asteroidsArray.length; i++) {
                     asteroidsArray[i].update();
+                    // Stopping game when asteroid leaves the bottom edge of the canvas
                     if (asteroidsArray[i] !== undefined && asteroidsArray[i].y > innerHeight){
+                        largeExplosionSound();
                         earthDestroyed.style.display = 'block';
                         window.cancelAnimationFrame(stopMain);
                     }
                     let asteroidXCenter = asteroidsArray[i].x + (asteroidsArray[i].width / 2); 
                     let asteroidYCenter = asteroidsArray[i].y - (asteroidsArray[i].height / 2);
                     let shipXCenter = spaceship.layers[8].x + (spaceship.layers[8].width / 2); 
-                    let shipYCenter = spaceship.layers[8].y - (spaceship.layers[8].height / 2);   
+                    let shipYCenter = spaceship.layers[8].y - (spaceship.layers[8].height / 2); 
+                    // Collision effect between ship and asteroid.  
                     if (getDistance(spaceship.layers[8].x, spaceship.layers[8].y, asteroidXCenter, asteroidYCenter) < 50) {
+                        largeExplosionSound();
                         shipDestroyed.style.display = 'block';
                         window.cancelAnimationFrame(stopMain);
                     } 
                 }
-            }        
+            }   
+
+            enemyship.update();
+            
+            for (var i = 0; i < enemyBullets.length; i++) {
+                enemyBullets[i].update();
+                // Colission effect between enemy bullet and ship
+                if (getDistance(spaceship.layers[8].x, spaceship.layers[8].y, enemyBullets[i].x, enemyBullets[i].y) < 20) {
+                    largeExplosionSound();
+                    shipShot.style.display = 'block';
+                    window.cancelAnimationFrame(stopMain);
+                }
+                // Removing enemy bullet from array if it leaves the bottom edge of the canvas.
+                if (enemyBullets[i].y > innerHeight) {
+                    let bulletIndex = enemyBullets.indexOf(enemyBullets[i]);
+                    enemyBullets.splice(bulletIndex, 1);
+                } 
+            }     
+            player.update();
         }
         init(); // Initialize canvas with objects.
         main(); // Start the cycle.
