@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/stylesheet.css">
     <link rel="stylesheet" href="css/app.css">
     <title>Space Shooter</title>
 </head>
@@ -13,17 +14,22 @@
         <canvas id="canvas">Sorry, your browser is not supporting canvas element.</canvas>
     </div>
     <div id="info">
-        <p>Use arrows to move left/right and space to fire.</p>
+        <p>Use <strong>arrows</strong> to move and <strong>'x'</strong> to fire.</p>
         <p>Asteroids cannot touch you or the bottom edge of the canvas!</p>
     </div>
     <div id="shipDestroyed">
         <h2>Game over.</h2>
-        <p>Your ship has been destroyed by huge asteroid!</p>
+        <p>Your ship has been destroyed by <strong>huge asteroid!</strong></p>
     </div>
     <div id="earthDestroyed">
         <h2>Game over.</h2>
-        <p>Earth has been destroyed by huge asteroid!</p>
+        <p>Earth has been destroyed by <strong>huge asteroid!</strong></p>
     </div>
+    <div id="shipShot">
+        <h2>Game over.</h2>
+        <p>Your ship has been destroyed by <strong>invaders laser!</strong></p>
+    </div>
+    <script src="js/sound.js"></script>
     <script src="dist/out.js"></script>
 </body>
 </html>
