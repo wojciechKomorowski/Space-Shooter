@@ -130,16 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bullets.push(bullet);
         } 
     }
-
-    let enemyShooting = () => {
-        let timer = setInterval( () => {
-            let bullet = new EnemyBullet(enemyBulletProps);
-            bullet.x = enemyship.x + 40;
-            enemyBullets.push(bullet);
-        }, 1000);
-    }
-    enemyShooting();
-    
+  
     document.addEventListener('keydown', keyDownHandler, false);
     document.addEventListener('keyup', keyUpHandler, false);
     document.addEventListener('keypress', keyPressHandler, false);
@@ -188,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         draw() {
             c.fillStyle = this.color;
             c.fillRect(this.x, this.y, this.width, this.height);
+            c.fillRect(this.x, this.y, this.width, this.height);
         };
 
         update() {
@@ -207,29 +199,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // -- Asteroids --
-    class Asteroids extends Rectangle {
-        constructor(asteroids) {
-            super(asteroids);
-            this.dy = asteroids.dy;
+    class Invader {
+        constructor(object) {
+            this.layers = object.layers; // Layers (array of objects) to draw more complicated shapes from numbers of rectangles.
+            this.dy = object.dy;
         }
 
         draw() {
-            c.fillStyle = this.color;
-            c.fillRect(this.x, this.y, this.width, this.height);
+            for (let i = 0; i < this.layers.length; i++) {
+                let data = this.layers[i];
+                let loc = {
+                    x: data.x,
+                    y: data.y,
+                    width: data.width,
+                    height: data.height,
+                    color: data.color
+                };  
+                c.fillStyle = loc.color;
+                c.fillRect(loc.x, loc.y, loc.width, loc.height);
+            }
         };
 
         update() {
-
-            // Restart cycle (inifinity)
-            if (this.y > innerHeight) {
-                this.y = randomIntFromRange(-100, -500);
+            for (let i = 0; i < this.layers.length; i++) {
+                this.layers[i].y += this.dy;
             }
-            // Larger asteroids are faster.
-            if (this.width >= 50 && this.height >= 50) {
-                this.dy = randomIntFromRange(2, 3); 
-            }
-
-            this.y += this.dy;
             this.draw();
         }
     }
@@ -295,25 +289,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // -- Enemy ship --
     class EnemyShip {
-        constructor(ship) {
-            this.x = ship.x;
-            this.dx = ship.dx;
-            this.y = ship.y;
-            this.width = ship.width;
-            this.height = ship.height; 
-            this.color = ship.color; 
-        };
-
-        draw() {
-            c.fillStyle = this.color;
-            c.fillRect(this.x, this.y, this.width, this.height);
+        constructor(object) {
+            this.layers = object.layers; // Layers (array of objects) to draw more complicated shapes from numbers of rectangles.
+            this.dx = object.dx;
         }
 
-        update() {
-            if (this.x + this.width > innerWidth || this.x < 0) {
-                this.dx = -this.dx;
+        draw() {
+            for (let i = 0; i < this.layers.length; i++) {
+                let data = this.layers[i];
+                let loc = {
+                    x: data.x,
+                    y: data.y,
+                    width: data.width,
+                    height: data.height,
+                    color: data.color
+                };  
+                c.fillStyle = loc.color;
+                c.fillRect(loc.x, loc.y, loc.width, loc.height);
             }
-            this.x += this.dx;            
+        };
+
+        update() {
+            for (let i = 0; i < this.layers.length; i++) {
+                if (this.layers[i].x + this.layers[i].width > innerWidth || this.layers[i].x < 0) {
+                    this.dx = -this.dx;
+                }
+                this.layers[i].x += this.dx; 
+            }         
             this.draw();
         }
     }
@@ -322,7 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
     class EnemyBullet {
         constructor(bullet) {
             this.x = bullet.x;
-            this.dx = bullet.dx;
             this.y = bullet.y;
             this.width = bullet.width;
             this.height = bullet.height; 
@@ -341,6 +342,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // -- Enemy ship --
+    class Star {
+        constructor(object) {
+            this.layers = object.layers; // Layers (array of objects) to draw more complicated shapes from numbers of rectangles.
+            this.dy = object.dy;
+        }
+
+        draw() {
+            for (let i = 0; i < this.layers.length; i++) {
+                let data = this.layers[i];
+                let loc = {
+                    x: data.x,
+                    y: data.y,
+                    width: data.width,
+                    height: data.height,
+                    color: data.color
+                };  
+                c.fillStyle = loc.color;
+                c.fillRect(loc.x, loc.y, loc.width, loc.height);
+            }
+        };
+
+        update() {
+            for (let i = 0; i < this.layers.length; i++) {
+                this.layers[i].y += this.dy; 
+            }         
+            this.draw();
+        }
+    }
+
     // --- DYNAMIC ELEMENTS TO RENDER ---
 
     let playerScore = 0;
@@ -348,15 +379,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let starsArray; // Array to store background stars.
     let spaceship;
-    let p = 4; // Size of single pixel, used to create the ship.
+    let p = 4; // Size of single pixel, used to create the ship..
+    let ep = 5; // Size of single pixel, used to create the enemyeship.
+    let ip = 4; // Size of single pixel, used to create the invader.
+    let sp = 4; // Size of single pixel, used to create the star.
     let bullet; 
     let bullets = []; // Array to store bullets.
 
-    let asteroidsNumber = 0;  // Number of asteroids.
-    let asteroidsArray; // Array to store asteroids.
-    let asteroidsControlPoint = false; // Information about starting asteroids drop.
-    let asteroidsDrop = 6000; // Asteroids drop time.
-
+    let invaders = []; // Array to store invaders.
+    let invadersDropTime = 6000; // Asteroids drop time.
+    let invadersControlPoint = false;
+    
     let enemyship;
     let enemyBullets = [];
 
@@ -368,21 +401,15 @@ document.addEventListener('DOMContentLoaded', () => {
         y: yStartingPoint + p * 2, 
         width: p * 2, 
         height: p * 3,
-        color: 'green'
+        color: 'orange'
     };
     
-    let enemyXStartingPoint = innerWidth/2 + p; // Starting X coordinate of enemyship and bullets.
-    let enemyYStartingPoint = 0; // Starting Y coordinate of enemyship and bullets.
-    let enemyWidth = 80;
-    let enemyHeight = 80;
-    // Enemy bullet properties - declared outside init function bcs needed in enemyShooting interval function.
-    let enemyBulletProps = {
-        x: enemyXStartingPoint, 
-        y: enemyYStartingPoint + enemyHeight, 
-        width: p * 2, 
-        height: p * 3,
-        color: 'deeppink'
-    };
+    let enemyXStartingPoint = innerWidth/2; // Starting X coordinate of enemyship and bullets.
+    let enemyYStartingPoint = ep * 6; // Starting Y coordinate of enemyship and bullets.
+
+    let stars = [];
+    let starsDropTime = 6000; // Asteroids drop time.
+    let starsControlPoint = false;
 
     // Game state information div.
     let infoBox = document.getElementById('info');
@@ -392,6 +419,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let timer = setTimeout( () => {
         infoBox.style.display = 'none';
     }, 7000);
+
+    
 
     // --- FUNCTION TO INITIALIZE CANVAS ---
 
@@ -437,28 +466,40 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Asteroids.
-        asteroidsNumber = 10;
-        asteroidsArray = [];
-        let asteroidsLoop = () => {
-            let timer = setInterval( () => {
-                for (let i = 0; i < asteroidsNumber; i++) {
-                    let asteroidsProps = {
-                        x: randomIntFromRange(60, innerWidth - 60),
-                        y: randomIntFromRange(-100, -300),
-                        dy: randomIntFromRange(1, 2),
-                        width: randomIntFromRange(40, 60),
-                        height: randomIntFromRange(40, 60),
-                        color: 'gray'
-                    };       
-                asteroidsControlPoint = true;
-                asteroidsProps.x = randomIntFromRange(40, innerWidth - 60);
-                asteroidsArray.push(new Asteroids(asteroidsProps));
-            }
-            }, asteroidsDrop);
-        }
-        asteroidsLoop();
+        // Invaders
         
+        let invadersDrop = () => {
+            let timer = setInterval( () => {
+                invadersControlPoint = true;
+                for (let i = 0; i < 10; i++) {
+                    let invaderXStartingPoint = randomIntFromRange(30, innerWidth - 50); // Starting X coordinate of invaders.
+                    let invaderYStartingPoint = randomIntFromRange(-100, -400); // Starting Y coordinate of invaders.
+                    let invaderProps = {
+                        layers: [
+                            {color: 'lime', x: invaderXStartingPoint, y: invaderYStartingPoint, width: ip, height: ip},
+                            {color: 'lime', x: invaderXStartingPoint + ip * 3, y: invaderYStartingPoint, width: ip, height: ip},
+                            {color: 'lime', x: invaderXStartingPoint - ip, y: invaderYStartingPoint + ip, width: ip * 6, height: ip},
+                            {color: 'lime', x: invaderXStartingPoint - ip * 2, y: invaderYStartingPoint + ip * 2, width: ip * 8, height: ip},
+                            {color: 'lime', x: invaderXStartingPoint - ip * 3, y: invaderYStartingPoint + ip * 3, width: ip * 10, height: ip},
+                            {color: 'lime', x: invaderXStartingPoint - ip * 3, y: invaderYStartingPoint + ip * 4, width: ip * 10, height: ip},
+                            {color: 'lime', x: invaderXStartingPoint - ip * 3, y: invaderYStartingPoint + ip * 5, width: ip * 10, height: ip},
+                            {color: 'lime', x: invaderXStartingPoint - ip * 3, y: invaderYStartingPoint + ip * 6, width: ip * 10, height: ip},
+                            {color: 'black', x: invaderXStartingPoint - ip, y: invaderYStartingPoint + ip * 3, width: ip * 2, height: ip},
+                            {color: 'black', x: invaderXStartingPoint + ip * 3, y: invaderYStartingPoint + ip * 3, width: ip * 2, height: ip},
+                            {color: 'black', x: invaderXStartingPoint - ip, y: invaderYStartingPoint + ip * 6, width: ip, height: ip},
+                            {color: 'black', x: invaderXStartingPoint + ip, y: invaderYStartingPoint + ip * 6, width: ip, height: ip},
+                            {color: 'black', x: invaderXStartingPoint + ip * 2, y: invaderYStartingPoint + ip * 6, width: ip, height: ip},
+                            {color: 'black', x: invaderXStartingPoint + ip * 4, y: invaderYStartingPoint + ip * 6, width: ip, height: ip}
+                        ],
+                        dy: randomIntFromRange(2, 3)
+                    }; 
+                    let invader = new Invader(invaderProps);
+                    invaders.push(invader);
+                }
+            }, invadersDropTime)
+        }
+        invadersDrop();
+
         // Spaceship
         let shipProps = {
             layers: [
@@ -503,15 +544,117 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Enemy ship
         let enemyProps = {
-            x: enemyXStartingPoint,
-            dx: 1,
-            y: enemyYStartingPoint,
-            width: enemyWidth,
-            height: enemyHeight,
-            color: 'red'
+            layers: [
+                {color: 'blue', x: enemyXStartingPoint, y: enemyYStartingPoint, width: ep * 4, height: ep},
+                {color: 'blue', x: enemyXStartingPoint - ep * 4, y: enemyYStartingPoint + ep, width: ep * 12, height: ep},
+                {color: 'blue', x: enemyXStartingPoint - ep * 5, y: enemyYStartingPoint + ep * 2, width: ep * 14, height: ep},
+                {color: 'blue', x: enemyXStartingPoint - ep * 6, y: enemyYStartingPoint + ep * 3, width: ep * 16, height: ep},
+                {color: 'blue', x: enemyXStartingPoint - ep * 6, y: enemyYStartingPoint + ep * 4, width:ep * 16, height: ep},
+                {color: 'lightgray', x: enemyXStartingPoint - ep * 8, y: enemyYStartingPoint + ep * 5, width: ep * 20, height: ep},
+                {color: 'darkgray', x: enemyXStartingPoint - ep * 9, y: enemyYStartingPoint + ep * 6, width: ep * 22, height: ep},
+                {color: 'gray', x: enemyXStartingPoint - ep * 10, y: enemyYStartingPoint + ep * 7, width: ep * 24, height: ep},
+                {color: 'darkgray', x: enemyXStartingPoint - ep * 9, y: enemyYStartingPoint + ep * 8, width: ep * 22, height: ep},
+                {color: 'lightgray', x: enemyXStartingPoint - ep * 8, y: enemyYStartingPoint + ep * 9, width: ep * 20, height: ep},
+                {color: 'gray', x: enemyXStartingPoint - ep * 6, y: enemyYStartingPoint + ep * 10, width: ep * 16, height: ep},
+                {color: 'lightblue', x: enemyXStartingPoint + ep * 3, y: enemyYStartingPoint + ep, width: ep * 3, height: ep},
+                {color: 'lightblue', x: enemyXStartingPoint + ep * 4, y: enemyYStartingPoint + ep * 2, width: ep * 3,height: ep},
+                {color: 'lightblue', x: enemyXStartingPoint + ep * 5, y: enemyYStartingPoint + ep * 3, width: ep * 2,height: ep},
+                {color: 'cyan', x: enemyXStartingPoint - ep * 7, y: enemyYStartingPoint + ep * 7, width: ep, height: ep},
+                {color: 'cyan', x: enemyXStartingPoint + ep * 10, y: enemyYStartingPoint + ep * 7, width: ep, height: ep},
+                {color: 'cyan', x: enemyXStartingPoint - ep, y: enemyYStartingPoint +ep * 7, width: ep, height: ep},
+                {color: 'cyan', x: enemyXStartingPoint + ep * 4, y: enemyYStartingPoint + ep * 7, width: ep, height: ep},
+                {color: 'cyan', x: enemyXStartingPoint - ep * 4, y: enemyYStartingPoint + ep * 12, width: ep * 12, height: ep},
+                {color: 'cyan', x: enemyXStartingPoint - ep * 2, y: enemyYStartingPoint + ep * 14, width: ep * 8, height: ep},
+            ],
+            dx: 1
         }
+        // Function to create jet engine effect.
+        let blinkLights = () => {
+            let color = '';
+            let controler = false;
+            let timer = setInterval( () => {
+                if (controler ===  false) {
+                    controler = true;
+                    enemyProps.layers[14].color = 'yellow';
+                    enemyProps.layers[15].color = 'yellow';
+                    enemyProps.layers[16].color = 'yellow';
+                    enemyProps.layers[17].color = 'yellow';
+                } else {
+                    controler = false;
+                    enemyProps.layers[14].color = 'cyan';
+                    enemyProps.layers[15].color = 'cyan';
+                    enemyProps.layers[16].color = 'cyan';
+                    enemyProps.layers[17].color = 'cyan';
+                }
+            }, 500);
+        }
+        blinkLights();
         enemyship = new EnemyShip(enemyProps);
+
+        // Enemy bullets
+        let enemyShooting = () => {
+            let enemyBulletProps = {
+                x: enemyXStartingPoint, 
+                y: enemyYStartingPoint, 
+                width: p * 2, 
+                height: p * 3,
+                color: 'cyan'
+            };
+            let timer = setInterval( () => {
+                let bullet = new EnemyBullet(enemyBulletProps);
+                bullet.x = enemyship.layers[19].x + p * 2;
+                bullet.y = enemyship.layers[19].y + p * 2;
+                enemyBullets.push(bullet);
+            }, 1000);
+        }
+        enemyShooting();  
+
+        // Star
+        let starDrop = () => {
+            let timer = setInterval( () => {
+                starsControlPoint = true;
+                for (let i = 0; i < 1; i++) {
+                    starXStartingPoint = randomIntFromRange(30, innerWidth - 30); // Starting X coordinate of star.
+                    starYStartingPoint = randomIntFromRange(-100, -400) // Starting Y coordinate of star.
+                    let starProps = {
+                        layers: [
+                            {color: 'yellow', x: starXStartingPoint, y: starYStartingPoint, width: sp * 2, height: sp},
+                            {color: 'yellow', x: starXStartingPoint, y: starYStartingPoint + sp, width: sp * 2, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp, y: starYStartingPoint + sp * 2, width: sp * 4, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp, y: starYStartingPoint + sp * 3, width: sp * 4, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 2, y: starYStartingPoint + sp * 4, width: sp * 6, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 6, y: starYStartingPoint + sp * 5, width: sp * 14, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 5, y: starYStartingPoint + sp * 6, width: sp * 12, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 4, y: starYStartingPoint + sp * 7, width: sp * 10, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 3, y: starYStartingPoint + sp * 8, width: sp * 8, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 2, y: starYStartingPoint + sp * 9, width: sp * 6, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 2, y: starYStartingPoint + sp * 10, width: sp * 6, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 3, y: starYStartingPoint + sp * 11, width: sp * 8, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 3, y: starYStartingPoint + sp * 12, width: sp * 8, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 3, y: starYStartingPoint + sp * 13, width: sp * 2, height: sp},
+                            {color: 'yellow', x: starXStartingPoint + sp * 3, y: starYStartingPoint + sp * 13, width: sp * 2, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 4, y: starYStartingPoint + sp * 14, width: sp * 2, height: sp},
+                            {color: 'yellow', x: starXStartingPoint + sp * 4, y: starYStartingPoint + sp * 14, width: sp * 2, height: sp},
+                            {color: 'yellow', x: starXStartingPoint - sp * 4, y: starYStartingPoint + sp * 15, width: sp * 2, height: sp},
+                            {color: 'yellow', x: starXStartingPoint + sp * 4, y: starYStartingPoint + sp * 15, width: sp * 2, height: sp},
+                            {color: 'black', x: starXStartingPoint - sp, y: starYStartingPoint + sp * 6, width: sp, height: sp * 2},
+                            {color: 'black', x: starXStartingPoint + sp * 2, y: starYStartingPoint + sp * 6, width: sp, height: sp * 2},
+                            {color: 'black', x: starXStartingPoint - sp / 2, y: starYStartingPoint + sp * 10, width: sp * 3, height: sp},
+                            {color: 'black', x: starXStartingPoint - sp, y: starYStartingPoint + sp * 9, width: sp, height: sp},
+                            {color: 'black', x: starXStartingPoint + sp * 2, y: starYStartingPoint + sp * 9, width: sp, height: sp},
+                        ],
+                        dy: randomIntFromRange(2, 3)
+                    }; 
+                    let star = new Star(starProps);
+                    stars.push(star);
+                }
+                console.log(stars);
+                
+            }, starsDropTime)
+        }
+        // starDrop();
     }
+    
 
     // --- MAIN ANIMATION LOOP ---
     
@@ -534,46 +677,56 @@ document.addEventListener('DOMContentLoaded', () => {
                     let bulletIndex = bullets.indexOf(bullets[i]);
                     bullets.splice(bulletIndex, 1);
                 }
-                for (var j = 0; j < asteroidsArray.length; j++) {
-                    let asteroidXCenter = asteroidsArray[j].x + (asteroidsArray[j].width / 2); 
-                    let asteroidYCenter = asteroidsArray[j].y - (asteroidsArray[j].height / 2);
-                    // Collision effect between bullet and asteroid.
-                    if (bullets[i] != undefined && getDistance(bullets[i].x, bullets[i].y, asteroidXCenter, asteroidYCenter) < 35) {
+                for (var j = 0; j < invaders.length; j++) {
+                    let invaderXCenter = invaders[j].layers[5].x + (invaders[j].layers[5].width / 2); 
+                    let invaderYCenter = invaders[j].layers[5].y - (invaders[j].layers[5].height / 2);
+                    // Collision effect between bullet and invader.
+                    if (bullets[i] != undefined && getDistance(bullets[i].x, bullets[i].y, invaderXCenter, invaderYCenter) < 20) {
                         smallExplosionSound();
                         playerScore += 1;
-                        let index = asteroidsArray.indexOf(asteroidsArray[j]);
+                        let index = invaders.indexOf(invaders[j]);
                         let bulletIndex = bullets.indexOf(bullets[i]);
                         bullets.splice(bulletIndex, 1); // Collided bullet removed from array.
-                        asteroidsArray.splice(index, 1); // Collided asteroid removed from array.
+                        invaders.splice(index, 1); // Collided invader removed from array.
                     }
                 }        
             }
 
-            if (asteroidsControlPoint === true) {
-                for (let i = 0; i < asteroidsArray.length; i++) {
-                    asteroidsArray[i].update();
-                    // Stopping game when asteroid leaves the bottom edge of the canvas
-                    if (asteroidsArray[i] !== undefined && asteroidsArray[i].y > innerHeight){
+            if (invadersControlPoint === true) {
+                for (let i = 0; i < invaders.length; i++) {
+                    invaders[i].update();
+                    // Stopping game when invader leaves the bottom edge of the canvas
+                    if (invaders[i] !== undefined && invaders[i].layers[5].y > innerHeight){
                         largeExplosionSound();
                         earthDestroyed.style.display = 'block';
                         window.cancelAnimationFrame(stopMain);
                     }
-                    let asteroidXCenter = asteroidsArray[i].x + (asteroidsArray[i].width / 2); 
-                    let asteroidYCenter = asteroidsArray[i].y - (asteroidsArray[i].height / 2);
+                    let invaderXCenter = invaders[i].layers[5].x + (invaders[i].layers[5].width / 2); 
+                    let invaderYCenter = invaders[i].layers[5].y - (invaders[i].layers[5].height / 2);
                     let shipXCenter = spaceship.layers[8].x + (spaceship.layers[8].width / 2); 
                     let shipYCenter = spaceship.layers[8].y - (spaceship.layers[8].height / 2); 
-                    // Collision effect between ship and asteroid.  
-                    if (getDistance(spaceship.layers[8].x, spaceship.layers[8].y, asteroidXCenter, asteroidYCenter) < 50) {
+                    // Collision effect between ship and invader.  
+                    if (getDistance(shipXCenter, shipYCenter, invaderXCenter, invaderYCenter) < 30) {
                         largeExplosionSound();
                         shipDestroyed.style.display = 'block';
                         window.cancelAnimationFrame(stopMain);
                     } 
                 }
             }   
-
+            // if (starsControlPoint === true) {
+            //     for (let i = 0; i < stars.length; i++) {
+            //         stars[i].update();
+            //         // Removing star from array if it leaves the top edge of the canvas.
+            //         if (star[i].layers[5].y < 0) {
+            //             let starIndex = stars.indexOf(stars[i]);
+            //             stars.splice(starIndex, 1);
+            //         }
+            //     }
+            // }
+            
             enemyship.update();
             
-            for (var i = 0; i < enemyBullets.length; i++) {
+            for (let i = 0; i < enemyBullets.length; i++) {
                 enemyBullets[i].update();
                 // Colission effect between enemy bullet and ship
                 if (getDistance(spaceship.layers[8].x, spaceship.layers[8].y, enemyBullets[i].x, enemyBullets[i].y) < 20) {
