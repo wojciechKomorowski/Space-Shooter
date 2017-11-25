@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
           0,                //attack
           0.3,              //decay
           "sawtooth",       //waveform
-          0.1,                //Volume
+          0.025,                //Volume
           -0.8,             //pan
           0,                //wait before playing
           1200,             //pitch bend amount
@@ -144,6 +144,15 @@ document.addEventListener('DOMContentLoaded', () => {
           undefined    //reverb array: [duration, decay, reverse?]
         );
       }
+
+    let bonusSound = () => {
+        //D
+        soundEffect(587.33, 0, 0.2, "square", 0.1, 0, 0);
+        //A
+        soundEffect(880, 0, 0.2, "square", 0.1, 0, 0.1);
+        //High D
+        soundEffect(1174.66, 0, 0.3, "square", 0.1, 0, 0.2);
+    }
 
     // --- EVENTS ---
 
@@ -267,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // -- Asteroids --
+    // -- Invader --
     class Invader {
         constructor(object) {
             this.layers = object.layers; // Layers (array of objects) to draw more complicated shapes from numbers of rectangles.
@@ -320,13 +329,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         update() {
             for (let i = 0; i < this.layers.length; i++) { // Applied controls to all spaceship layers.
-                if (rightPressed && this.layers[15].x < innerWidth - this.layers[5].width) {
+                if (rightPressed && this.layers[20].x < innerWidth - 25) {
                     this.layers[i].x += 6; 
-                } else if (leftPressed && this.layers[15].x > 0 + this.layers[4].width) {
+                } else if (leftPressed && this.layers[20].x > 55) {
                     this.layers[i].x -= 6;
-                } else if (upPressed && this.layers[15].y > 0 + this.layers[15].height) {
+                } else if (upPressed && this.layers[20].y > 20) {
                     this.layers[i].y -= 6;
-                } else if (downPressed && this.layers[15].y < innerHeight - this.layers[15].height) {
+                } else if (downPressed && this.layers[20].y < innerHeight - 10) {
                     this.layers[i].y += 6;
                 } 
             }
@@ -443,6 +452,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- DYNAMIC ELEMENTS TO RENDER ---
 
+    let gameOver = false;
+
     let playerScore = 0;
     let player;
     
@@ -477,10 +488,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let enemyYStartingPoint = ep * 6; // Starting Y coordinate of enemyship and bullets.
 
     let stars = [];
-    let starsDropTime = 6000; // Asteroids drop time.
+    let starsDropTime = 10000; // Star drop time.
     let starsControlPoint = false;
 
-    // Game state information div.
+    // Game state information divs.
     let infoBox = document.getElementById('info');
     let shipDestroyed = document.getElementById('shipDestroyed');
     let earthDestroyed = document.getElementById('earthDestroyed');
@@ -536,11 +547,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Invaders
-        
+        let invadersNumber = 10;
         let invadersDrop = () => {
             let timer = setInterval( () => {
                 invadersControlPoint = true;
-                for (let i = 0; i < 10; i++) {
+                for (let i = 0; i < invadersNumber; i++) {
                     let invaderXStartingPoint = randomIntFromRange(30, innerWidth - 50); // Starting X coordinate of invaders.
                     let invaderYStartingPoint = randomIntFromRange(-100, -400); // Starting Y coordinate of invaders.
                     let invaderProps = {
@@ -560,10 +571,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             {color: 'black', x: invaderXStartingPoint + ip * 2, y: invaderYStartingPoint + ip * 6, width: ip, height: ip},
                             {color: 'black', x: invaderXStartingPoint + ip * 4, y: invaderYStartingPoint + ip * 6, width: ip, height: ip}
                         ],
-                        dy: randomIntFromRange(2, 3)
+                        dy: randomIntFromRange(1, 2.5)
                     }; 
                     let invader = new Invader(invaderProps);
-                    invaders.push(invader);
+                    if (gameOver === false) {
+                        invaders.push(invader);
+                    }
                 }
             }, invadersDropTime)
         }
@@ -587,7 +600,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 {color: 'red', x: xStartingPoint - p, y: yStartingPoint + p * 15, width: p * 4, height: p}, 
                 {color: 'orangered', x: xStartingPoint, y: yStartingPoint + p * 14, width: p * 2, height: p}, 
                 {color: 'orangered', x: xStartingPoint, y: yStartingPoint + p * 15, width: p * 2, height: p}, 
-                {color: 'red', x: xStartingPoint, y: yStartingPoint + p * 16, width: p * 2, height: p * 2}
+                {color: 'red', x: xStartingPoint, y: yStartingPoint + p * 16, width: p * 2, height: p * 2},
+                {color: 'lightblue', x: xStartingPoint + p, y: yStartingPoint + p * 8, width: p, height: p}, 
+                {color: 'lightblue', x: xStartingPoint + p, y: yStartingPoint + p * 9, width: p, height: p}, 
+                {color: 'lightblue', x: xStartingPoint + p, y: yStartingPoint + p * 10, width: p * 2, height: p}, 
+                {color: 'white', x: xStartingPoint - p * 7, y: yStartingPoint + p * 15, width: p * 4, height: p},
+                {color: 'white', x: xStartingPoint + p * 5, y: yStartingPoint + p * 15, width: p * 4, height: p}
             ]
         };
         // Function to create jet engine effect.
@@ -637,7 +655,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ],
             dx: 1
         }
-        // Function to create jet engine effect.
+        // Function to create blinking lights effect.
         let blinkLights = () => {
             let color = '';
             let controler = false;
@@ -673,16 +691,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 let bullet = new EnemyBullet(enemyBulletProps);
                 bullet.x = enemyship.layers[19].x + p * 2;
                 bullet.y = enemyship.layers[19].y + p * 2;
-                enemyBullets.push(bullet);
+                if (gameOver === false) {
+                    enemyBullets.push(bullet);
+                }
             }, 1000);
         }
         enemyShooting();  
 
         // Star
         let starDrop = () => {
+            let starsNumber = 1;
             let timer = setInterval( () => {
                 starsControlPoint = true;
-                for (let i = 0; i < 1; i++) {
+                for (let i = 0; i < starsNumber; i++) {
                     starXStartingPoint = randomIntFromRange(30, innerWidth - 30); // Starting X coordinate of star.
                     starYStartingPoint = randomIntFromRange(-100, -400) // Starting Y coordinate of star.
                     let starProps = {
@@ -715,16 +736,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         dy: randomIntFromRange(2, 3)
                     }; 
                     let star = new Star(starProps);
-                    stars.push(star);
+                    if (gameOver === false) {
+                        stars.push(star);
+                    }
                 }
-                console.log(stars);
-                
             }, starsDropTime)
         }
-        // starDrop();
+        starDrop();
     }
     
-
     // --- MAIN ANIMATION LOOP ---
     
     (() => {
@@ -738,6 +758,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             spaceship.update();
+            // Objects centers
+            let shipXCenter = spaceship.layers[8].x + (spaceship.layers[8].width / 2); 
+            let shipYCenter = spaceship.layers[8].y - (spaceship.layers[8].height / 2);
 
             for (let i = 0; i < bullets.length; i++) {   
                 bullets[i].update();
@@ -766,32 +789,41 @@ document.addEventListener('DOMContentLoaded', () => {
                     invaders[i].update();
                     // Stopping game when invader leaves the bottom edge of the canvas
                     if (invaders[i] !== undefined && invaders[i].layers[5].y > innerHeight){
+                        gameOver = true;
                         largeExplosionSound();
                         earthDestroyed.style.display = 'block';
                         window.cancelAnimationFrame(stopMain);
                     }
                     let invaderXCenter = invaders[i].layers[5].x + (invaders[i].layers[5].width / 2); 
-                    let invaderYCenter = invaders[i].layers[5].y - (invaders[i].layers[5].height / 2);
-                    let shipXCenter = spaceship.layers[8].x + (spaceship.layers[8].width / 2); 
-                    let shipYCenter = spaceship.layers[8].y - (spaceship.layers[8].height / 2); 
+                    let invaderYCenter = invaders[i].layers[5].y - (invaders[i].layers[5].height / 2); 
                     // Collision effect between ship and invader.  
                     if (getDistance(shipXCenter, shipYCenter, invaderXCenter, invaderYCenter) < 30) {
+                        gameOver = true;
                         largeExplosionSound();
                         shipDestroyed.style.display = 'block';
                         window.cancelAnimationFrame(stopMain);
                     } 
                 }
             }   
-            // if (starsControlPoint === true) {
-            //     for (let i = 0; i < stars.length; i++) {
-            //         stars[i].update();
-            //         // Removing star from array if it leaves the top edge of the canvas.
-            //         if (star[i].layers[5].y < 0) {
-            //             let starIndex = stars.indexOf(stars[i]);
-            //             stars.splice(starIndex, 1);
-            //         }
-            //     }
-            // }
+
+            if (starsControlPoint === true && stars.length > 0) {
+                for (let i = 0; i < stars.length; i++) {
+                    stars[i].update();
+                    let starXCenter = stars[i].layers[9].x + (stars[i].layers[9].width / 2); 
+                    let starYCenter = stars[i].layers[9].y - (stars[i].layers[9].height / 2); 
+                    // Collision effect between ship and invader.  
+                    let starIndex = stars.indexOf(stars[i]);
+                    if (getDistance(shipXCenter, shipYCenter, starXCenter, starYCenter) < 40) {
+                        playerScore += 10;
+                        bonusSound();
+                        stars.splice(starIndex, 1);
+                    }
+                    // Removing star from array if it leaves the top edge of the canvas.
+                    if (stars.length > 0 && stars[i].layers[5].y > innerHeight) {
+                        stars.splice(starIndex, 1);
+                    }
+                }
+            }
             
             enemyship.update();
             
@@ -799,6 +831,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 enemyBullets[i].update();
                 // Colission effect between enemy bullet and ship
                 if (getDistance(spaceship.layers[8].x, spaceship.layers[8].y, enemyBullets[i].x, enemyBullets[i].y) < 20) {
+                    gameOver = true;
                     largeExplosionSound();
                     shipShot.style.display = 'block';
                     window.cancelAnimationFrame(stopMain);
