@@ -9,26 +9,52 @@
 </head>
 <body>
     
+    <div class="starting-screen">
+        <h1 class="game-title">SpaceShooter</h1>
+        <button class="start-button">Start</button>
+    </div>
     <div class="wrapper">
-        <canvas id="canvas">Sorry, your browser is not supporting canvas element.</canvas>
+        <canvas id="canvas">
+            Sorry, your browser is not supporting canvas element.
+        </canvas>
+        <p class="music-handler">
+            Music
+        </p>
     </div>
     <div id="info">
         <p>Use <strong>arrows</strong> to move and <strong>'x'</strong> to fire.</p>
         <p>Invaders cannot touch you or the bottom edge of the canvas!</p>
     </div>
-    <div id="shipDestroyed">
-        <h2>Game over.</h2>
-        <p>Your ship has been destroyed by <strong>space invader!</strong></p>
+    <div id="game-end">
+        <h2>Game over</h2>
+        <p id="ship-destroyed">Your ship has been destroyed by <strong>space invader!</strong></p>
+        <p id="earth-destroyed">Earth has been destroyed by <strong>space invaders!</strong></p>
+        <p id="ship-shot">Your ship has been destroyed by <strong>invaders laser!</strong></p>
+        <div id="score">
+            <input type="text" placeholder="Your name" class="player">
+            <input type="submit" value="Send" class="send-button">
+            <p class="name-validator">Your Name should have more than 0 and less than 15 signs!</p>
+        </div>
+        <div id="play-again">
+            <button class="play-button">Play again</button>
+        </div>
     </div>
-    <div id="earthDestroyed">
-        <h2>Game over.</h2>
-        <p>Earth has been destroyed by <strong>space invaders!</strong></p>
+
+    <div class="scores-wrapper">
+        <ol class="score-list">
+            
+        </ol>
     </div>
-    <div id="shipShot">
-        <h2>Game over.</h2>
-        <p>Your ship has been destroyed by <strong>invaders laser!</strong></p>
-    </div>
+
+    <footer class="footer">
+        <p class="copyrights">SpaceShooter&copy;</p>
+        <p class="highscores">- highscores</p>
+        <a href="https://github.com/wojciechKomorowski" target="blank class="author">- wKomorowski</a>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
     <script src="js/sound.js"></script>
     <script src="dist/out.js"></script>
+    
 </body>
 </html>
