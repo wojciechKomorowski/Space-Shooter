@@ -112,6 +112,7 @@ body {
     font-size: 1.5rem;
     color: white;
     background-color: black;
+    border: 2px solid white;
     padding: 5px;
     margin: 20px 0;
 }
@@ -171,6 +172,24 @@ a:hover, .highscores:hover {
     z-index: 1;
 }
 
+.close-scorelist {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: -50px;
+    right: 20px;
+    border: none;
+    font-size: 2rem;
+    color: white;
+    background: rgba(0, 0, 0, 0.95); 
+    z-index: 5;
+}
+
+.close-scorelist:hover {
+    color: orangered;
+}
+
 .scorelistings:nth-child(1) {
     border: 5px solid gold;
 }
@@ -194,6 +213,10 @@ a:hover, .highscores:hover {
     color: rgba(255, 255, 255, 0.5);
     display: none;
 }
+
+button {
+    outline: none;
+  }
 
 @media screen and (max-width: 480px) {
     #canvas, .starting-screen {
