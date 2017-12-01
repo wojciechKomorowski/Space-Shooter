@@ -68,7 +68,6 @@
 /***/ (function(module, exports) {
 
 document.addEventListener('DOMContentLoaded', () => {
-
     // Initialize Firebase.
     let config = {
         apiKey: "AIzaSyA-Ln53aTvKeyPdS1mTfWDKOQWcJWFdj4Q",
@@ -84,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let refSorted = database.ref('scores').orderByChild('score');
     
     let playerScore = 0;
-    let highScoresHandler = true;
 
     let resetGameStatus = () => {
         gameEnd.style.display = 'none';
@@ -148,13 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let showScores = () => {
         getScores();
-        if (highScoresHandler === false) {
-            scoresWrapper.style.zIndex = '1';
-            highScoresHandler = true;
-        } else {
-            scoresWrapper.style.zIndex = '6';
-            highScoresHandler = false;
-        }
+        scoresWrapper.style.zIndex = '6';
+    }
+
+    let hideScores = () => {
+        scoresWrapper.style.zIndex = '1';
     }
 
     // Game state information divs.
@@ -169,6 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let nameInput = document.querySelector('.player');
     let nameValidator = document.querySelector('.name-validator');
     let highScores = document.querySelector('.highscores');
+    let closeButton = document.querySelector('.close-scorelist');
     let scoresWrapper = document.querySelector('.scores-wrapper');
     let startingScreen = document.querySelector('.starting-screen');
     let startButton = document.querySelector('.start-button');
@@ -176,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitScore.addEventListener('click', updateScore);
     playAgain.addEventListener('click', resetGameStatus);
     highScores.addEventListener('click', showScores);
+    closeButton.addEventListener('click', hideScores);
     startButton.addEventListener('click', () => {
         runGame();
         runSound();
@@ -285,59 +283,59 @@ document.addEventListener('DOMContentLoaded', () => {
             // Pythagorean Theorem.
             return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
         }
-
+        
         // Sound effects
         let shootSound = () => {
             soundEffect(
-            1046.5,           //frequency
-            0,                //attack
-            0.3,              //decay
-            "sawtooth",       //waveform
-            0.025,                //Volume
-            -0.8,             //pan
-            0,                //wait before playing
-            1200,             //pitch bend amount
-            false,            //reverse bend
-            0,                //random pitch range
-            25,               //dissonance
-            undefined, //echo array: [delay, feedback, filter]
-            undefined         //reverb array: [duration, decay, reverse?]
+                1046.5,          //frequency
+                0,               //attack
+                0.3,             //decay
+                "sawtooth",      //waveform
+                0.025,     //Volume
+                0,               //pan
+                0,               //wait before playing
+                1200,            //pitch bend amount
+                false,           //reverse bend
+                0,               //random pitch range
+                25,              //dissonance
+                undefined,       //echo array: [delay, feedback, filter]
+                undefined        //reverb array: [duration, decay, reverse?]
             );
         }
 
         let smallExplosionSound = () => {
             soundEffect(
-            16,          //frequency
-            0,           //attack
-            0.2,           //decay
-            "sawtooth",  //waveform
-            0.1,           //volume
-            0,           //pan
-            0,           //wait before playing
-            0,           //pitch bend amount
-            false,       //reverse
-            0,           //random pitch range
-            50,          //dissonance
-            undefined,   //echo array: [delay, feedback, filter]
-            undefined    //reverb array: [duration, decay, reverse?]
+                16,          //frequency
+                0,           //attack
+                0.2,         //decay
+                "sawtooth",  //waveform
+                0.1,         //volume
+                0,           //pan
+                0,           //wait before playing
+                0,           //pitch bend amount
+                false,       //reverse
+                0,           //random pitch range
+                50,          //dissonance
+                undefined,   //echo array: [delay, feedback, filter]
+                undefined    //reverb array: [duration, decay, reverse?]
             );
         }
 
         let largeExplosionSound = () => {
             soundEffect(
-            16,          //frequency
-            0,           //attack
-            1.2,           //decay
-            "sawtooth",  //waveform
-            0.1,           //volume
-            0,           //pan
-            0,           //wait before playing
-            0,           //pitch bend amount
-            false,       //reverse
-            0,           //random pitch range
-            50,          //dissonance
-            undefined,   //echo array: [delay, feedback, filter]
-            undefined    //reverb array: [duration, decay, reverse?]
+                16,          //frequency
+                0,           //attack
+                1.2,         //decay
+                "sawtooth",  //waveform
+                0.1,         //volume
+                0,           //pan
+                0,           //wait before playing
+                0,           //pitch bend amount
+                false,       //reverse
+                0,           //random pitch range
+                50,          //dissonance
+                undefined,   //echo array: [delay, feedback, filter]
+                undefined    //reverb array: [duration, decay, reverse?]
             );
         }
 
