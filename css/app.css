@@ -245,7 +245,7 @@ a:hover, .highscores:hover {
 
 button {
     outline: none;
-  }
+}
 
 /* Tablet resolution */
 @media screen and (max-width: 768px) {
