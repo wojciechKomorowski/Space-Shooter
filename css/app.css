@@ -216,8 +216,8 @@ a:hover, .highscores:hover {
 
 .left-button {
     cursor: pointer;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     position: absolute;
     left: 0;
     bottom: 0;
@@ -226,13 +226,13 @@ a:hover, .highscores:hover {
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 50%;
     display: none;
-    z-index: 7;
+    z-index: 6;
 }
 
 .right-button {
     cursor: pointer;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     position: absolute;
     right: 0;
     bottom: 0;
@@ -241,7 +241,7 @@ a:hover, .highscores:hover {
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 50%;
     display: none;
-    z-index: 7;
+    z-index: 6;
 }
 
 button {
