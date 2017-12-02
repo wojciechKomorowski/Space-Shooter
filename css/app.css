@@ -251,17 +251,17 @@ button {
 @media screen and (max-width: 480px) {
     #canvas, .starting-screen {
         width: 320px;
-        height: 480px;
+        height: 460px;
     }
     .score-list {
         width: 320px;
         max-height: 300px;
     } 
-    .left-button {
+    .left-button, .right-button {
         display: block;
     }   
-    .right-button {
-        display: block;
+    #info {
+        display: none;
     }
 }
 
