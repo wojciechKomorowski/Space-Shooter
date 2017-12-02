@@ -103,6 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let scoresWrapper = document.querySelector('.scores-wrapper');
     let startingScreen = document.querySelector('.starting-screen');
     let startButton = document.querySelector('.start-button');
+    let leftMobile = document.querySelector('.left-button');
+    let rightMobile = document.querySelector('.right-button');
 
     submitScore.addEventListener('click', updateScore);
     playAgain.addEventListener('click', resetGameStatus);
@@ -150,8 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 shootSound.play();
             } 
         }
-        //Assign the callback function that should run
-        //when the sounds have loaded.
+        // Assign the callback function that should run when the sounds have loaded.
         sounds.whenLoaded = setup;
         musicController.addEventListener('click', setup);
         document.addEventListener('keypress', keyPressHandler, false);        
@@ -185,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let invadersControlPoint = false;
         
         let enemyship;
-        let enemyBullets = [];
+        let enemyBullets = []; // Array to store enemy bullets.
 
         let xStartingPoint = innerWidth/2 + p; // Starting X coordinate of spaceship and bullets.
         let yStartingPoint = innerHeight - 110 + p; // Starting Y coordinate of spaceship and bullets.
@@ -276,14 +277,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- EVENTS ---
 
         // -- Spaceship Movement and shooting--
-        let leftMobile = document.querySelector('.left-button');
-        let rightMobile = document.querySelector('.right-button');
 
         let rightPressed = false;
         let leftPressed = false;
         let upPressed = false;
         let downPressed = false;
         
+        // Keyboard controls.
         let keyDownHandler = (e) => {
             if (e.keyCode === 39) {
                 rightPressed = true;
@@ -317,6 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } 
         }
 
+        // Touch controls.
         let handleStartLeft = () => {
             leftPressed = true;
             let bullet = new Bullet(bulletProps);
@@ -854,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 spaceship.update();
-                // Objects centers
+                // Spaceship center.
                 let shipXCenter = spaceship.layers[8].x + (spaceship.layers[8].width / 2); 
                 let shipYCenter = spaceship.layers[8].y - (spaceship.layers[8].height / 2);
 
@@ -883,7 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (invadersControlPoint === true) {
                     for (let i = 0; i < invaders.length; i++) {
                         invaders[i].update();
-                        // Stopping game when invader leaves the bottom edge of the canvas
+                        // Stopping game when invader leaves the bottom edge of the canvas.
                         if (invaders[i] !== undefined && invaders[i].layers[5].y > innerHeight){
                             showEndGameInfo(earthDestroyed);
                             window.cancelAnimationFrame(stopMain);
@@ -903,14 +904,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         stars[i].update();
                         let starXCenter = stars[i].layers[9].x + (stars[i].layers[9].width / 2); 
                         let starYCenter = stars[i].layers[9].y - (stars[i].layers[9].height / 2); 
-                        // Collision effect between ship and invader.  
+                        // Collision effect between ship and star.  
                         let starIndex = stars.indexOf(stars[i]);
                         if (getDistance(shipXCenter, shipYCenter, starXCenter, starYCenter) < 40) {
                             playerScore += 10;
                             bonusSound();
                             stars.splice(starIndex, 1);
                         }
-                        // Removing star from array if it leaves the bottom edge of the canvas.
+                        // Removing star from array, if it leaves the bottom edge of the canvas.
                         if (stars.length > 0 && stars[i].layers[5].y > innerHeight) {
                             stars.splice(starIndex, 1);
                         }
@@ -921,7 +922,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 for (let i = 0; i < enemyBullets.length; i++) {
                     enemyBullets[i].update();
-                    // Colission effect between enemy bullet and ship
+                    // Colission effect between enemy bullet and ship.
                     if (getDistance(spaceship.layers[8].x, spaceship.layers[8].y, enemyBullets[i].x, enemyBullets[i].y) < 20) {
                         showEndGameInfo(shipShot);
                         window.cancelAnimationFrame(stopMain);
