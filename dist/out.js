@@ -349,6 +349,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // --- EVENTS ---
 
         // -- Spaceship Movement and shooting--
+        var leftMobile = document.querySelector('.left-button');
+        var rightMobile = document.querySelector('.right-button');
+        var leftMobileShoot = document.querySelector('.left-shoot');
+        var rightMobileShoot = document.querySelector('.right-shoot');
 
         var rightPressed = false;
         var leftPressed = false;
@@ -388,9 +392,29 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
 
+        var handleStartLeft = function handleStartLeft() {
+            leftPressed = true;
+        };
+
+        var handleEndLeft = function handleEndLeft() {
+            leftPressed = false;
+        };
+
+        var handleStartRight = function handleStartRight() {
+            rightPressed = true;
+        };
+
+        var handleEndRight = function handleEndRight() {
+            rightPressed = false;
+        };
+
         document.addEventListener('keydown', keyDownHandler, false);
         document.addEventListener('keyup', keyUpHandler, false);
         document.addEventListener('keypress', keyPressHandler, false);
+        leftMobile.addEventListener("touchstart", handleStartLeft, false);
+        leftMobile.addEventListener("touchend", handleEndLeft, false);
+        rightMobile.addEventListener("touchstart", handleStartRight, false);
+        rightMobile.addEventListener("touchend", handleEndRight, false);
 
         // --- CONSTRUCTOR CLASSES---
 
