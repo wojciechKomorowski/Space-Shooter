@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var startButton = document.querySelector('.start-button');
     var leftMobile = document.querySelector('.left-button');
     var rightMobile = document.querySelector('.right-button');
+    var mobile = window.matchMedia('(max-width: 480px)'); // Screen width detection.
 
     submitScore.addEventListener('click', updateScore);
     playAgain.addEventListener('click', resetGameStatus);
@@ -796,17 +797,33 @@ document.addEventListener('DOMContentLoaded', function () {
             var invadersDrop = function invadersDrop() {
                 var timer = setInterval(function () {
                     invadersControlPoint = true;
-                    for (var _i2 = 0; _i2 < invadersNumber; _i2++) {
+
+                    var _loop = function _loop(_i2) {
                         var invaderXStartingPoint = randomIntFromRange(30, innerWidth - 50); // Starting X coordinate of invaders.
                         var invaderYStartingPoint = randomIntFromRange(-100, -400); // Starting Y coordinate of invaders.
+
                         var invaderProps = {
                             layers: [{ color: 'lime', x: invaderXStartingPoint, y: invaderYStartingPoint, width: ip, height: ip }, { color: 'lime', x: invaderXStartingPoint + ip * 3, y: invaderYStartingPoint, width: ip, height: ip }, { color: 'lime', x: invaderXStartingPoint - ip, y: invaderYStartingPoint + ip, width: ip * 6, height: ip }, { color: 'lime', x: invaderXStartingPoint - ip * 2, y: invaderYStartingPoint + ip * 2, width: ip * 8, height: ip }, { color: 'lime', x: invaderXStartingPoint - ip * 3, y: invaderYStartingPoint + ip * 3, width: ip * 10, height: ip }, { color: 'lime', x: invaderXStartingPoint - ip * 3, y: invaderYStartingPoint + ip * 4, width: ip * 10, height: ip }, { color: 'lime', x: invaderXStartingPoint - ip * 3, y: invaderYStartingPoint + ip * 5, width: ip * 10, height: ip }, { color: 'lime', x: invaderXStartingPoint - ip * 3, y: invaderYStartingPoint + ip * 6, width: ip * 10, height: ip }, { color: 'black', x: invaderXStartingPoint - ip, y: invaderYStartingPoint + ip * 3, width: ip * 2, height: ip }, { color: 'black', x: invaderXStartingPoint + ip * 3, y: invaderYStartingPoint + ip * 3, width: ip * 2, height: ip }, { color: 'black', x: invaderXStartingPoint - ip, y: invaderYStartingPoint + ip * 6, width: ip, height: ip }, { color: 'black', x: invaderXStartingPoint + ip, y: invaderYStartingPoint + ip * 6, width: ip, height: ip }, { color: 'black', x: invaderXStartingPoint + ip * 2, y: invaderYStartingPoint + ip * 6, width: ip, height: ip }, { color: 'black', x: invaderXStartingPoint + ip * 4, y: invaderYStartingPoint + ip * 6, width: ip, height: ip }],
-                            dy: randomIntFromRange(1, 2.5)
+                            dy: undefined
                         };
+                        // Handicap for mobile players. Invaders are a bit slower.
+                        var changeDy = function changeDy(mobile) {
+                            if (mobile.matches) {
+                                invaderProps.dy = randomIntFromRange(1, 2);
+                            } else {
+                                invaderProps.dy = randomIntFromRange(1, 2.5);
+                            }
+                        };
+                        changeDy(mobile);
+                        mobile.addListener(changeDy);
                         var invader = new Invader(invaderProps);
                         if (gameOver === false) {
                             invaders.push(invader);
                         }
+                    };
+
+                    for (var _i2 = 0; _i2 < invadersNumber; _i2++) {
+                        _loop(_i2);
                     }
                 }, invadersDropTime);
             };
