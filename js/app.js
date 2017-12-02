@@ -278,8 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // -- Spaceship Movement and shooting--
         let leftMobile = document.querySelector('.left-button');
         let rightMobile = document.querySelector('.right-button');
-        let leftMobileShoot = document.querySelector('.left-shoot');
-        let rightMobileShoot = document.querySelector('.right-shoot');
 
         let rightPressed = false;
         let leftPressed = false;
