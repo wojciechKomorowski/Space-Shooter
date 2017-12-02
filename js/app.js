@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let startButton = document.querySelector('.start-button');
     let leftMobile = document.querySelector('.left-button');
     let rightMobile = document.querySelector('.right-button');
+    let mobile = window.matchMedia('(max-width: 480px)'); // Screen width detection.
 
     submitScore.addEventListener('click', updateScore);
     playAgain.addEventListener('click', resetGameStatus);
@@ -639,6 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     for (let i = 0; i < invadersNumber; i++) {
                         let invaderXStartingPoint = randomIntFromRange(30, innerWidth - 50); // Starting X coordinate of invaders.
                         let invaderYStartingPoint = randomIntFromRange(-100, -400); // Starting Y coordinate of invaders.
+                        
                         let invaderProps = {
                             layers: [
                                 {color: 'lime', x: invaderXStartingPoint, y: invaderYStartingPoint, width: ip, height: ip},
@@ -656,8 +658,18 @@ document.addEventListener('DOMContentLoaded', () => {
                                 {color: 'black', x: invaderXStartingPoint + ip * 2, y: invaderYStartingPoint + ip * 6, width: ip, height: ip},
                                 {color: 'black', x: invaderXStartingPoint + ip * 4, y: invaderYStartingPoint + ip * 6, width: ip, height: ip}
                             ],
-                            dy: randomIntFromRange(1, 2.5)
+                            dy: undefined
                         }; 
+                        // Handicap for mobile players. Invaders are a bit slower.
+                        let changeDy = function(mobile) {
+                            if (mobile.matches) {
+                                invaderProps.dy = randomIntFromRange(1, 2);
+                            } else {
+                                invaderProps.dy = randomIntFromRange(1, 2.5);
+                            }
+                        };
+                        changeDy(mobile)
+                        mobile.addListener(changeDy);
                         let invader = new Invader(invaderProps);
                         if (gameOver === false) {
                             invaders.push(invader);
