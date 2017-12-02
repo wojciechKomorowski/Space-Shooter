@@ -4,7 +4,6 @@
          url('../fonts/shpinscher-regular-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-
 }
 
 * {
@@ -79,7 +78,7 @@ body {
 
 #canvas {
     width: 480px;
-    height: 640px;
+    height: 600px;
     background: rgb(0, 0, 0);
     image-rendering: pixelated;
     -webkit-box-shadow: 0px 0px 30px 1px rgba(0,0,0,0.75);
@@ -248,6 +247,20 @@ button {
     outline: none;
   }
 
+/* Tablet resolution */
+@media screen and (max-width: 768px) {
+    .score-list {
+        width: 320px;
+        max-height: 300px;
+    } 
+    .left-button, .right-button {
+        display: block;
+    }   
+    #info {
+        display: none;
+    }
+}
+/* Mobile phone resolution */
 @media screen and (max-width: 480px) {
     #canvas, .starting-screen {
         width: 320px;
