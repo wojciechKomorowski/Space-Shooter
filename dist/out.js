@@ -394,6 +394,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var handleStartLeft = function handleStartLeft() {
             leftPressed = true;
+            var bullet = new Bullet(bulletProps);
+            bullet.x = spaceship.layers[0].x;
+            bullet.y = spaceship.layers[0].y;
+            bullets.push(bullet);
         };
 
         var handleEndLeft = function handleEndLeft() {
@@ -402,6 +406,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var handleStartRight = function handleStartRight() {
             rightPressed = true;
+            var bullet = new Bullet(bulletProps);
+            bullet.x = spaceship.layers[0].x;
+            bullet.y = spaceship.layers[0].y;
+            bullets.push(bullet);
         };
 
         var handleEndRight = function handleEndRight() {
