@@ -182,6 +182,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var scoresWrapper = document.querySelector('.scores-wrapper');
     var startingScreen = document.querySelector('.starting-screen');
     var startButton = document.querySelector('.start-button');
+    var leftMobile = document.querySelector('.left-button');
+    var rightMobile = document.querySelector('.right-button');
 
     submitScore.addEventListener('click', updateScore);
     playAgain.addEventListener('click', resetGameStatus);
@@ -225,8 +227,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 shootSound.play();
             }
         };
-        //Assign the callback function that should run
-        //when the sounds have loaded.
+        // Assign the callback function that should run when the sounds have loaded.
         sounds.whenLoaded = setup;
         musicController.addEventListener('click', setup);
         document.addEventListener('keypress', keyPressHandler, false);
@@ -260,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var invadersControlPoint = false;
 
         var enemyship = void 0;
-        var enemyBullets = [];
+        var enemyBullets = []; // Array to store enemy bullets.
 
         var xStartingPoint = innerWidth / 2 + p; // Starting X coordinate of spaceship and bullets.
         var yStartingPoint = innerHeight - 110 + p; // Starting Y coordinate of spaceship and bullets.
@@ -349,14 +350,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // --- EVENTS ---
 
         // -- Spaceship Movement and shooting--
-        var leftMobile = document.querySelector('.left-button');
-        var rightMobile = document.querySelector('.right-button');
 
         var rightPressed = false;
         var leftPressed = false;
         var upPressed = false;
         var downPressed = false;
 
+        // Keyboard controls.
         var keyDownHandler = function keyDownHandler(e) {
             if (e.keyCode === 39) {
                 rightPressed = true;
@@ -390,6 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
 
+        // Touch controls.
         var handleStartLeft = function handleStartLeft() {
             leftPressed = true;
             var bullet = new Bullet(bulletProps);
@@ -930,7 +931,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 spaceship.update();
-                // Objects centers
+                // Spaceship center.
                 var shipXCenter = spaceship.layers[8].x + spaceship.layers[8].width / 2;
                 var shipYCenter = spaceship.layers[8].y - spaceship.layers[8].height / 2;
 
@@ -959,7 +960,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (invadersControlPoint === true) {
                     for (var _i5 = 0; _i5 < invaders.length; _i5++) {
                         invaders[_i5].update();
-                        // Stopping game when invader leaves the bottom edge of the canvas
+                        // Stopping game when invader leaves the bottom edge of the canvas.
                         if (invaders[_i5] !== undefined && invaders[_i5].layers[5].y > innerHeight) {
                             showEndGameInfo(earthDestroyed);
                             window.cancelAnimationFrame(stopMain);
@@ -979,14 +980,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         stars[_i6].update();
                         var starXCenter = stars[_i6].layers[9].x + stars[_i6].layers[9].width / 2;
                         var starYCenter = stars[_i6].layers[9].y - stars[_i6].layers[9].height / 2;
-                        // Collision effect between ship and invader.  
+                        // Collision effect between ship and star.  
                         var starIndex = stars.indexOf(stars[_i6]);
                         if (getDistance(shipXCenter, shipYCenter, starXCenter, starYCenter) < 40) {
                             playerScore += 10;
                             bonusSound();
                             stars.splice(starIndex, 1);
                         }
-                        // Removing star from array if it leaves the bottom edge of the canvas.
+                        // Removing star from array, if it leaves the bottom edge of the canvas.
                         if (stars.length > 0 && stars[_i6].layers[5].y > innerHeight) {
                             stars.splice(starIndex, 1);
                         }
@@ -997,7 +998,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 for (var _i7 = 0; _i7 < enemyBullets.length; _i7++) {
                     enemyBullets[_i7].update();
-                    // Colission effect between enemy bullet and ship
+                    // Colission effect between enemy bullet and ship.
                     if (getDistance(spaceship.layers[8].x, spaceship.layers[8].y, enemyBullets[_i7].x, enemyBullets[_i7].y) < 20) {
                         showEndGameInfo(shipShot);
                         window.cancelAnimationFrame(stopMain);
