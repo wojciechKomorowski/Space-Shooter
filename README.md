@@ -13,14 +13,29 @@ Use git clone in console to clone repository to your current location:
 git -clone https://github.com/wojciechKomorowski/Space-Shooter.git
 ```
 
-### Prerequisites
+### Installing
+
+Install [node.js](https://nodejs.org/en/) environment.
 
 After cloning repository just type in console:
 
 ```
 npm install
 ```
-All packages from package.json devDependencies should be installed in node_modules;
+
+All packages from package.json devDependencies should be installed in node_modules.
+
+To use modules you need to run webpack through console in your project location:
+
+```
+node_modules/.bin/webpack
+```
+
+If you installed webpack globally, you can type:
+
+```
+webpack
+```
 
 ## Built With
 
