@@ -10,11 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     firebase.initializeApp(config);
     let database = firebase.database();
-    let ref = database.ref('scores');
-    let refSorted = database.ref('scores').orderByChild('score');
+    let ref = database.ref('scores'); // Databse defined to add new records.
+    let refSorted = database.ref('scores').orderByChild('score'); // Database defined to sort records.
     
     let playerScore = 0;
-
+    // Function to not reload page, after clicking play again.
     let resetGameStatus = () => {
         gameEnd.style.display = 'none';
         earthDestroyed.style.display = 'none';
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         playerScore = 0;
         runGame();
     }
-
+    // Function to push score to database.
     let updateScore = () => {
         let playerName = nameInput.value;
         if (playerName.length >= 15 || playerName.length === 0) {
@@ -43,24 +43,27 @@ document.addEventListener('DOMContentLoaded', () => {
     let gotData = (data) => {
         var ol = document.querySelector('.score-list');
         var scorelistings = document.querySelectorAll('.scorelistings');
+        // Removing list before injecting new, actualized list.
         for (let i = 0; i < scorelistings.length; i++) {
             scorelistings[i].remove();
         }
         
         var scoresArray = [];
+        // Saves cores to array. Required to flip records(highest score to lowest score).
         var scores = data.forEach((child) => {
             scoresArray.push(child.val()); 
         });
         
         var counter = 1;
+        // Flipping records and injecting to HTML.
         for (let i = scoresArray.length - 1; i >= 0; i--) {
             var name = scoresArray[i].name;
             var score = scoresArray[i].score;
             var li = document.createElement('li');
             li.innerText = counter + ". " + name + ': ' + score;
             li.className = 'scorelistings';
+            counter += 1
             ol.appendChild(li);
-            counter += 1;
         } 
     }
     
@@ -68,9 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Error');
         console.log(error);
     }
-
+    
     let getScores = () => {
-        refSorted.once('value', gotData, errData);
+        refSorted.once('value', gotData, errData); // Firbase method to get scores from database.
     }
     getScores();
     
@@ -117,15 +120,17 @@ document.addEventListener('DOMContentLoaded', () => {
         musicController.style.display = 'block';
         // Load the sounds.
     sounds.load([
-        'sounds/01 The Misadventure Begins.mp3'
+        'sounds/01 The Misadventure Begins.mp3',
+        'sounds/laser2.mp3'
     ]);
     
     let music = sounds['sounds/01 The Misadventure Begins.mp3'];
+    let shootSound = sounds['sounds/laser2.mp3'];
     let musicHandler = true;
     let setup = () => {
-        //Set the music volume.
+        // Set the music volume.
         music.volume = 0.2; 
-        //Make the music loop.
+        // Make the music loop.
         music.loop = true;
             if (musicHandler === false) {
                 music.pause();
@@ -138,17 +143,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         
         }
+        let keyPressHandler = (e) => {
+            shootSound.volume = 0.08;
+            if (e.key === 'x') {
+                // Shoot sound volume.
+                shootSound.play();
+            } 
+        }
         //Assign the callback function that should run
         //when the sounds have loaded.
         sounds.whenLoaded = setup;
         musicController.addEventListener('click', setup);
+        document.addEventListener('keypress', keyPressHandler, false);        
     }
     
     // Function to handle game.
     let runGame = () => {
 
         // --- VARIABLES ---
-
         let canvas = document.querySelector('#canvas');
         let c = canvas.getContext('2d');
         let innerWidth = canvas.width = canvas.scrollWidth;
@@ -215,25 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
         }
         
-        // Sound effects
-        let shootSound = () => {
-            soundEffect(
-                1046.5,          //frequency
-                0,               //attack
-                0.3,             //decay
-                "sawtooth",      //waveform
-                0.025,     //Volume
-                0,               //pan
-                0,               //wait before playing
-                1200,            //pitch bend amount
-                false,           //reverse bend
-                0,               //random pitch range
-                25,              //dissonance
-                undefined,       //echo array: [delay, feedback, filter]
-                undefined        //reverb array: [duration, decay, reverse?]
-            );
-        }
-
+        // Sound effects.       
         let smallExplosionSound = () => {
             soundEffect(
                 16,          //frequency
@@ -301,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         let keyUpHandler = (e) => {
-            if(e.keyCode === 39) {
+            if (e.keyCode === 39) {
                 rightPressed = false;
             } else if (e.keyCode === 37) {
                 leftPressed = false;
@@ -314,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let keyPressHandler = (e) => {
             if (e.key === 'x') {
-                shootSound();
                 let bullet = new Bullet(bulletProps);
                 bullet.x = spaceship.layers[0].x;
                 bullet.y = spaceship.layers[0].y;
@@ -753,7 +746,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     bullet.x = enemyship.layers[19].x + p * 2;
                     bullet.y = enemyship.layers[19].y + p * 2;
                     if (gameOver === false) {
-                        enemyBullets.push(bullet);
+                        enemyBullets.unshift(bullet);
                     }
                 }, 1000);
             }
@@ -765,8 +758,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 let timer = setInterval( () => {
                     starsControlPoint = true;
                     for (let i = 0; i < starsNumber; i++) {
-                        starXStartingPoint = randomIntFromRange(30, innerWidth - 30); // Starting X coordinate of star.
-                        starYStartingPoint = randomIntFromRange(-100, -400) // Starting Y coordinate of star.
+                        let starXStartingPoint = randomIntFromRange(30, innerWidth - 30); // Starting X coordinate of star.
+                        let starYStartingPoint = randomIntFromRange(-100, -400) // Starting Y coordinate of star.
                         let starProps = {
                             layers: [
                                 {color: 'yellow', x: starXStartingPoint, y: starYStartingPoint, width: sp * 2, height: sp},
@@ -899,12 +892,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (let i = 0; i < enemyBullets.length; i++) {
                     enemyBullets[i].update();
                     // Colission effect between enemy bullet and ship
-                    let bulletIndex = enemyBullets.indexOf(enemyBullets[i]);
                     if (getDistance(spaceship.layers[8].x, spaceship.layers[8].y, enemyBullets[i].x, enemyBullets[i].y) < 20) {
                         showEndGameInfo(shipShot);
                         window.cancelAnimationFrame(stopMain);
                     }
                     // Removing enemy bullet from array if it leaves the bottom edge of the canvas.
+                    let bulletIndex = enemyBullets.indexOf(enemyBullets[i]);
                     if (enemyBullets[i].y > innerHeight) {
                         enemyBullets.splice(bulletIndex, 1);
                     } 
@@ -915,6 +908,4 @@ document.addEventListener('DOMContentLoaded', () => {
             main(); // Start the cycle.
         })();
     }
-    // runSound();
-    // runGame();   
 })
