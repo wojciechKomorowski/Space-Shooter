@@ -321,6 +321,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let handleStartLeft = () => {
             leftPressed = true;
+            let bullet = new Bullet(bulletProps);
+            bullet.x = spaceship.layers[0].x;
+            bullet.y = spaceship.layers[0].y;
+            bullets.push(bullet);
         }
 
         let handleEndLeft = () => {
@@ -329,6 +333,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let handleStartRight = () => {
             rightPressed = true;
+            let bullet = new Bullet(bulletProps);
+            bullet.x = spaceship.layers[0].x;
+            bullet.y = spaceship.layers[0].y;
+            bullets.push(bullet);
         }
 
         let handleEndRight = () => {
