@@ -245,6 +245,7 @@ a:hover, .highscores:hover {
 
 button {
     outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Tablet resolution */
