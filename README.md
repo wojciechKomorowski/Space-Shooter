@@ -61,6 +61,7 @@ Now your project is hosted on localhost:3001.
 * JS => canvas API
 * Webpack
 * Sound.js library - [kittycatattack](https://github.com/kittykatattack/sound.js)
+* Firebase - [firebase](https://firebase.google.com/)
 
 ## Author
 
@@ -68,7 +69,7 @@ Now your project is hosted on localhost:3001.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT [License](https://github.com/wojciechKomorowski/Space-Shooter/blob/master/LICENSE.md).
 
 ## Acknowledgments
 
