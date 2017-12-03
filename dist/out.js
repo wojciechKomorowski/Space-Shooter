@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var earthDestroyed = document.getElementById('earth-destroyed');
     var shipShot = document.getElementById('ship-shot');
     var playAgain = document.getElementById('play-again');
+    var playAgainButton = document.querySelector('.play-button');
     var gameEndMessage = document.getElementById('game-end');
     var submitScore = document.querySelector('.send-button');
     var nameInput = document.querySelector('.player');
@@ -187,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var mobile = window.matchMedia('(max-width: 480px)'); // Screen width detection.
 
     submitScore.addEventListener('click', updateScore);
-    playAgain.addEventListener('click', resetGameStatus);
+    playAgainButton.addEventListener('click', resetGameStatus);
     highScores.addEventListener('click', showScores);
     closeButton.addEventListener('click', hideScores);
     startButton.addEventListener('click', function () {
