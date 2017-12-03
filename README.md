@@ -61,7 +61,7 @@ Now your project is hosted on localhost:3001.
 * JS => canvas API
 * Webpack
 * Sound.js library - [kittycatattack](https://github.com/kittykatattack/sound.js)
-* Firebase - [firebase](https://firebase.google.com/)
+* Firebase - [project firebase](https://space-shooter-scores.firebaseio.com)
 
 ## Author
 
