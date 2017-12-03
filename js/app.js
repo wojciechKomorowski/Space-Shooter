@@ -663,7 +663,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Handicap for mobile players. Invaders are a bit slower.
                         let changeDy = function(mobile) {
                             if (mobile.matches) {
-                                invaderProps.dy = randomIntFromRange(1, 2);
+                                invaderProps.dy = randomIntFromRange(1, 1.5);
                             } else {
                                 invaderProps.dy = randomIntFromRange(1, 2.5);
                             }
